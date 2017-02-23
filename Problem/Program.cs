@@ -58,7 +58,7 @@ namespace Problem
                 currentLine++;
                 for (int j=0; j < endpointCachesAmount; j++)
                 {
-                    string[] cacheServerInfo = fileLines[currentLine].Split(' ');
+                    string[] cacheServerInfo = fileLines[currentLine++].Split(' ');
                     int cacheID = int.Parse(cacheServerInfo[0]);
                     int cacheLatency = int.Parse(cacheServerInfo[1]);
 
@@ -67,9 +67,22 @@ namespace Problem
 
                     // dodanie Endpointa do Cachea
                     allCaches[cacheID].endpoints.Add(endpoint);
-                    currentLine++;
                 }
                 allEndpoints.Add(endpoint);
+            }
+
+            // dodajemy requesty
+            for (int i=0; i < numOfRequests; i++)
+            {
+                string[] requestInfo = fileLines[currentLine++].Split(' ');
+                int videoID = int.Parse(requestInfo[0]);
+                int endpointID = int.Parse(requestInfo[1]);
+                int requestDemand = int.Parse(requestInfo[2]); // liczba requestów
+
+                Video video = allVideos[videoID];
+                Endpoint endpoint = allEndpoints[endpointID];
+
+                endpoint.requests.Add(new Request(video, requestDemand));
             }
         }
 
