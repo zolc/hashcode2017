@@ -10,6 +10,11 @@ namespace Problem
     {
         List<Endpoint> endpoints;
 
-        int capacity;
+        int capacityLeft;
+        public Cache(List<Endpoint> e, int maxCapacity)
+        {
+            endpoints = e;
+            capacityLeft = maxCapacity;
+        }
     }
 }

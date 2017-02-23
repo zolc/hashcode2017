@@ -12,6 +12,10 @@ namespace Problem
         //private static int numOfvideos;
         //private static int numOfEndpoints;
         public int maxSize;
+        public List<Cache> allCaches;
+        public List<Endpoint> allEndpoints;
+        public List<Video> allVideos;
+        public List<Request> allRequests;
         static void Main(string[] args)
         {
 
