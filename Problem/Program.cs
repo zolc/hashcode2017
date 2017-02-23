@@ -132,7 +132,7 @@ namespace Problem
                     int count = x.addedVideos.Count();
                     while(count>0)
                     {
-                        Console.Write("{0} ", x.addedVideos[count-1].id);
+                        Console.Write(" {0}", x.addedVideos[count-1].id);
                         x.addedVideos.RemoveAt(count - 1);
                         count--;
                     }
