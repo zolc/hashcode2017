@@ -15,22 +15,58 @@ namespace Problem
         public List<Cache> allCaches;
         public List<Endpoint> allEndpoints;
         public List<Video> allVideos;
-        public List<Request> allRequests;
+        //public List<Request> allRequests;
         static void Main(string[] args)
         {
 
         }
 
-        static void Parse()
+        void Parse()
         {
             string filename = Console.ReadLine();
-
             string input = File.ReadAllText(filename);
-            string firstline = input.Substring(0,input.IndexOf('\n'));
-            input = input.Remove(0,firstline.Length + 1);
-            string[] vals = firstline.Split(' ');
-           
+            //pierwsza linijka odjęta od input
+            string line = input.Substring(0,input.IndexOf('\n'));
+            input = input.Remove(0,line.Length + 1);
+            string[] vals = line.Split(' ');
+            int numOfEndpoints = int.Parse(vals[1]);
+            int numOfRequests = int.Parse(vals[2]);
+            int numOfCaches = int.Parse(vals[3]);
+            int maxSize = int.Parse(vals[vals.Count() - 1]);
+            //druga linijka odjęta od input
+            line = input.Substring(0,input.IndexOf('\n'));
+            input = input.Remove(0,line.Length + 1);
+            vals = line.Split(' ');
+            int i = 0;
+            foreach(var x in vals)
+            {
+                allVideos.Add(new Video(i++,int.Parse(x)));
+            }
+            int endpts = 0;
+            foreach (var row in input.Split('\n'))
+            {
+                while(endpts < numOfEndpoints)
+                {
+                    line = input.Substring(0,input.IndexOf('\n'));
+                    input = input.Remove(0,line.Length + 1);
+                    vals = line.Split(' ');
+                    int dLatency = int.Parse(vals[0]);
+                    int numOfCaches = int.Parse(vals[1]);
 
+                    for(int q=0; q<numOfCaches; q++)
+                    {
+
+                    }
+
+
+                    allEndpoints.Add(new Endpoint(, ))
+
+
+                    endpts++;
+                }
+                
+                i++;
+            }
         }
 
     }

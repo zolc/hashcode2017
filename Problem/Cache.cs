@@ -8,9 +8,9 @@ namespace Problem
 {
     class Cache
     {
-        List<Endpoint> endpoints;
+        public List<Endpoint> endpoints;
 
-        int capacityLeft;
+        public int capacityLeft;
         public Cache(List<Endpoint> e, int maxCapacity)
         {
             endpoints = e;

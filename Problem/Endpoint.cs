@@ -8,18 +8,14 @@ namespace Problem
 {
     class Endpoint
     {
-        int dataCenterLatency;
-        Dictionary<int,int> latencies;
-        List<Cache> caches;
-        List<Request> requests;
+        public int dataCenterLatency;
+        public Dictionary<Cache,int> latencies;
+        public List<Request> requests=new List<Request>();
 
-        public Endpoint(int d,Dictionary<int,int> l, List<Cache> ch, List<Request> req)
+        public Endpoint(int d,Dictionary<Cache,int> l)
         {
             dataCenterLatency = d;
             latencies = l;
-
-            caches = ch;
-            requests = req;
         }
     }
 }

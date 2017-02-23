@@ -8,8 +8,8 @@ namespace Problem
 {
     class Video
     {
-        int id;
-        int size;
+        public int id;
+        public int size;
         public Video(int i, int s)
         {
             id = i;

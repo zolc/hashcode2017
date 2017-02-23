@@ -8,12 +8,14 @@ namespace Problem
 {
     class Request
     {
-        int videoId;
-        int videoCount;
-        public Request(int vi, int vc)
+        public Video video;
+        public int videoCount;
+        public double Metric { get; set; }
+        public Request(Video v, int vc)
         {
-            videoId = vi;
+            video = v;
             videoCount = vc;
+            Metric = vc / v.size;
         }
     }
 }
