@@ -95,13 +95,15 @@ namespace Problem
         void FilterRequests()
         {
             // 1. Usuwamy requesty z endpointów bez cache
+            List<Endpoint> endpointsToRemove = new List<Endpoint>();
             foreach (Endpoint endpoint in allEndpoints)
             {
                 if (endpoint.latencies.Count == 0)
-                {
-                    endpoint.requests.Clear();
-                    allEndpoints.Remove(endpoint);
-                }
+                    endpointsToRemove.Add(endpoint);
+            }
+            for (int i = 0; i < endpointsToRemove.Count; i++)
+            {
+                allEndpoints.Remove(endpointsToRemove[i]);
             }
 
             // 2. Usuwamy requesty na filmy, które przekraczają maxSize
