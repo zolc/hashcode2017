@@ -25,59 +25,51 @@ namespace Problem
 
         void Parse()
         {
-            int i = 0;
             string filename = Console.ReadLine();
-            string input = File.ReadAllText(filename);
-            //pierwsza linijka odjęta od input
-            string line = input.Substring(0,input.IndexOf('\n'));
-            input = input.Remove(0,line.Length + 1);
-            string[] vals = line.Split(' ');
-            int numOfEndpoints = int.Parse(vals[1]);
-            int numOfRequests = int.Parse(vals[2]);
-            int numOfCaches = int.Parse(vals[3]);
-            int maxSize = int.Parse(vals[vals.Count() - 1]);
-            //dodajemy wszystkie cache
-            for (; i < numOfCaches; i++)
+            string[] fileLines = File.ReadAllLines(filename);
+
+            // Początkowe wartości
+            string[] initialNumbers = fileLines[0].Split(' ');
+            int numOfVideos = int.Parse(initialNumbers[0]);
+            int numOfEndpoints = int.Parse(initialNumbers[1]);
+            int numOfRequests = int.Parse(initialNumbers[2]);
+            int numOfCaches = int.Parse(initialNumbers[3]);
+            int maxSize = int.Parse(initialNumbers[4]);
+
+            // dodajemy wszystkie cache
+            for (int i = 0; i < numOfCaches; i++)
             {
                 allCaches.Add(new Cache(maxSize, i));
             }
             //dodajemy wszystkie video
-            line = input.Substring(0,input.IndexOf('\n'));
-            input = input.Remove(0,line.Length + 1);
-            vals = line.Split(' ');
-            i = 0;
-            foreach(var x in vals)
-            {
-                allVideos.Add(new Video(i++,int.Parse(x)));
-            }
+            string[] videosSizes = fileLines[1].Split(' ');
+            for (int i=0; i < numOfVideos; i++)
+                allVideos.Add(new Video(i, int.Parse(videosSizes[i])));
 
-            //dodajemy wszystkie endpointy
-            int endpts = 0;
-            foreach (var row in input.Split('\n'))
+            //dodajemy wszystkie endpointy i łączymy je z cache
+            int currentLine = 2;
+            for (int i=0; i < numOfEndpoints; i++)
             {
-                while(endpts < numOfEndpoints)
+                string[] endpointInfo = fileLines[currentLine].Split(' ');
+                int dataCenterLatency = int.Parse(endpointInfo[0]);
+                int endpointCachesAmount = int.Parse(endpointInfo[1]);
+
+                Endpoint endpoint = new Endpoint(dataCenterLatency);
+                currentLine++;
+                for (int j=0; j < endpointCachesAmount; j++)
                 {
-                    line = input.Substring(0,input.IndexOf('\n'));
-                    input = input.Remove(0,line.Length + 1);
-                    vals = line.Split(' ');
-                    int dLatency = int.Parse(vals[0]);
-                    int cachesNum= int.Parse(vals[1]);
-                    Endpoint e = new Endpoint(dLatency);
-                    for(int q=0; q< cachesNum; q++)
-                    {
-                        line = input.Substring(0,input.IndexOf('\n'));
-                        input = input.Remove(0,line.Length + 1);
-                        vals = line.Split(' ');
-                        //dodanie cache'a do endpointa
-                        e.latencies.Add(allCaches[int.Parse(vals[0])],int.Parse(vals[1]));
-                        //dodanie endpointa do cache'a
-                        allCaches[int.Parse(vals[0])].endpoints.Add(e);
-                       
-                    }
-                    allEndpoints.Add(e);
-                    endpts++;
+                    string[] cacheServerInfo = fileLines[currentLine].Split(' ');
+                    int cacheID = int.Parse(cacheServerInfo[0]);
+                    int cacheLatency = int.Parse(cacheServerInfo[1]);
+
+                    // dodanie Cache do Endpointa
+                    endpoint.latencies.Add(allCaches[cacheID], cacheLatency);
+
+                    // dodanie Endpointa do Cachea
+                    allCaches[cacheID].endpoints.Add(endpoint);
+                    currentLine++;
                 }
-                //requesty
+                allEndpoints.Add(endpoint);
             }
         }
 
