@@ -81,5 +81,29 @@ namespace Problem
             }
         }
 
+        void FilterRequests()
+        {
+            // 1. Usuwamy requesty z endpointów bez cache
+            foreach (Endpoint endpoint in allEndpoints)
+            {
+                if (endpoint.latencies.Count == 0)
+                {
+                    endpoint.requests.Clear();
+                    allEndpoints.Remove(endpoint);
+                }
+            }
+
+            // 2. Usuwamy requesty na filmy, które przekraczają maxSize
+            foreach (Endpoint endpoint in allEndpoints)
+            {
+                for (int i = 0; i < endpoint.requests.Count; i++)
+                {
+                    Request req = endpoint.requests[i];
+                    if (req.video.size > maxSize)
+                        endpoint.requests.Remove(req);
+                }
+            }
+        }
+
     }
 }

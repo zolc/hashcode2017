@@ -12,6 +12,7 @@ namespace Problem
         public Dictionary<Cache,int> latencies = new Dictionary<Cache, int>();
         public List<Request> requests=new List<Request>();
 
+
         public Endpoint(int d,Dictionary<Cache,int> l)
         {
             dataCenterLatency = d;
