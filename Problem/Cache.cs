@@ -8,23 +8,23 @@ namespace Problem
 {
     class Cache
     {
-        public List<Endpoint> endpoints=new List<Endpoint>();
+        public List<Endpoint> endpoints = new List<Endpoint>();
         public int cacheId;
         public int capacityLeft;
 
-        public Dictionary<Video, double> metrics=new Dictionary<Video,double>();
+        public Dictionary<Video,double> metrics = new Dictionary<Video,double>();
         public List<Video> addedVideos = new List<Video>();
-        public Cache(List<Endpoint> e, int maxCapacity)
+        public Cache(List<Endpoint> e,int maxCapacity)
         {
             endpoints = e;
             capacityLeft = maxCapacity;
         }
-        public Cache(int maxCapacity, int i)
+        public Cache(int maxCapacity,int i)
         {
             capacityLeft = maxCapacity;
             cacheId = i;
         }
-        
+
         public void SortMetrics()
         {
             metrics.OrderBy(item => item.Value);
@@ -32,30 +32,45 @@ namespace Problem
         }
         public void EvaluateMetrics()
         {
-            foreach(var endpoint in endpoints)
+            foreach (var endpoint in endpoints)
             {
-                foreach(var req in endpoint.requests)
+                foreach (var req in endpoint.requests)
                 {
-                    metrics.Add(req.video,0);
+                    try
+                    {
+                        metrics.Add(req.video,0);
+                    }
+                    catch{ }
                     metrics[req.video] += req.videoCount * (endpoint.dataCenterLatency - endpoint.latencies[this]);
                 }
             }
-            foreach(var x in metrics)
+            KeyValuePair<Video,double>[] array = metrics.ToArray();
+            for(int i =0; i<metrics.Count(); i++)
             {
-                metrics[x.Key] /= x.Key.size;
+                metrics[array[i].Key] /= array[i].Key.size;
             }
         }
 
-        public void addVideo()
+        public void addVideos()
         {
-            foreach(var x in metrics)
+            foreach (var x in metrics)
             {
-                if(capacityLeft >= x.Key.size)
+                if (capacityLeft >= x.Key.size)
                 {
                     capacityLeft -= x.Key.size;
                     addedVideos.Add(x.Key);
                 }
             }
+        }
+        public void finish()
+        {
+            EvaluateMetrics();
+            SortMetrics();
+            addVideos();
+        }
+        public bool IsUsed()
+        {
+            return (addedVideos.Count() != 0);
         }
     }
 }

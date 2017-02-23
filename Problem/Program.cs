@@ -21,6 +21,12 @@ namespace Problem
             Program p = new Program();
             p.Parse();
             p.FilterRequests();
+            foreach(var x in p.allCaches)
+            {
+                x.finish();
+            }
+            p.Output();
+
         }
 
         void Parse()
@@ -109,7 +115,31 @@ namespace Problem
                 }
             }
         }
-        
+        void Output()
+        {
+            int usedCaches = 0;
+            foreach (var x in allCaches)
+            {
+                if (x.IsUsed())
+                    usedCaches++;
+            }
+            Console.WriteLine(usedCaches);
+            foreach (var x in allCaches)
+            {
+                if (x.IsUsed())
+                {
+                    Console.Write(x.cacheId);
+                    int count = x.addedVideos.Count();
+                    while(count>0)
+                    {
+                        Console.Write("{0} ", x.addedVideos[count-1].id);
+                        x.addedVideos.RemoveAt(count - 1);
+                        count--;
+                    }
+                    Console.WriteLine();
+                }
+            }
+        }
 
     }
 }
