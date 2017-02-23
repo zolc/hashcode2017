@@ -12,17 +12,20 @@ namespace Problem
         //private static int numOfvideos;
         //private static int numOfEndpoints;
         public int maxSize;
-        public List<Cache> allCaches;
-        public List<Endpoint> allEndpoints;
-        public List<Video> allVideos;
+        public List<Cache> allCaches=new List<Cache>();
+        public List<Endpoint> allEndpoints=new List<Endpoint>();
+        public List<Video> allVideos= new List<Video>();
         //public List<Request> allRequests;
         static void Main(string[] args)
         {
-
+            Program p = new Program();
+            p.Parse();
+           
         }
 
         void Parse()
         {
+            int i = 0;
             string filename = Console.ReadLine();
             string input = File.ReadAllText(filename);
             //pierwsza linijka odjęta od input
@@ -33,15 +36,22 @@ namespace Problem
             int numOfRequests = int.Parse(vals[2]);
             int numOfCaches = int.Parse(vals[3]);
             int maxSize = int.Parse(vals[vals.Count() - 1]);
-            //druga linijka odjęta od input
+            //dodajemy wszystkie cache
+            for (; i < numOfCaches; i++)
+            {
+                allCaches.Add(new Cache(maxSize, i));
+            }
+            //dodajemy wszystkie video
             line = input.Substring(0,input.IndexOf('\n'));
             input = input.Remove(0,line.Length + 1);
             vals = line.Split(' ');
-            int i = 0;
+            i = 0;
             foreach(var x in vals)
             {
                 allVideos.Add(new Video(i++,int.Parse(x)));
             }
+
+            //dodajemy wszystkie endpointy
             int endpts = 0;
             foreach (var row in input.Split('\n'))
             {
@@ -51,21 +61,23 @@ namespace Problem
                     input = input.Remove(0,line.Length + 1);
                     vals = line.Split(' ');
                     int dLatency = int.Parse(vals[0]);
-                    int numOfCaches = int.Parse(vals[1]);
-
-                    for(int q=0; q<numOfCaches; q++)
+                    int cachesNum= int.Parse(vals[1]);
+                    Endpoint e = new Endpoint(dLatency);
+                    for(int q=0; q< cachesNum; q++)
                     {
-
+                        line = input.Substring(0,input.IndexOf('\n'));
+                        input = input.Remove(0,line.Length + 1);
+                        vals = line.Split(' ');
+                        //dodanie cache'a do endpointa
+                        e.latencies.Add(allCaches[int.Parse(vals[0])],int.Parse(vals[1]));
+                        //dodanie endpointa do cache'a
+                        allCaches[int.Parse(vals[0])].endpoints.Add(e);
+                       
                     }
-
-
-                    allEndpoints.Add(new Endpoint(, ))
-
-
+                    allEndpoints.Add(e);
                     endpts++;
                 }
-                
-                i++;
+                //requesty
             }
         }
 
