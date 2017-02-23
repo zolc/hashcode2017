@@ -27,7 +27,7 @@ namespace Problem
 
         public void SortMetrics()
         {
-            metrics.OrderBy(item => item.Value);
+            metrics.OrderByDescending(item => item.Value);
             metrics.OrderBy(item => item.Key.showups);
         }
         public void EvaluateMetrics()
