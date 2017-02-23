@@ -74,16 +74,10 @@ namespace Problem
             // 1. Usuwamy requesty z endpointów bez cache
             foreach (Endpoint endpoint in allEndpoints)
             {
-                for (int i=0; i < endpoint.requests.Count; i++)
+                if (endpoint.latencies.Count == 0)
                 {
-                    if (endpoint.caches.Count == 0)
-                    {
-                        foreach (Request request in endpoint.requests)
-                        {
-                            allRequests.Remove(request);
-                        }
-                        endpoint.requests.Clear();
-                    }
+                    endpoint.requests.Clear();
+                    allEndpoints.Remove(endpoint);
                 }
             }
 
@@ -93,11 +87,8 @@ namespace Problem
                 for (int i = 0; i < endpoint.requests.Count; i++)
                 {
                     Request req = endpoint.requests[i];
-                    if (allVideos[req.videoId].size > maxSize)
-                    {
+                    if (req.video.size > maxSize)
                         endpoint.requests.Remove(req);
-                        allRequests.Remove(req);
-                    }
                 }
             }
         }
