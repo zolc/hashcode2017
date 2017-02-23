@@ -42,6 +42,7 @@ namespace Problem
                     }
                     catch{ }
                     metrics[req.video] += req.videoCount * (endpoint.dataCenterLatency - endpoint.latencies[this]);
+                    metrics[req.video] /= (1 + req.video.showups);
                 }
             }
             KeyValuePair<Video,double>[] array = metrics.ToArray();
@@ -59,6 +60,7 @@ namespace Problem
                 {
                     capacityLeft -= x.Key.size;
                     addedVideos.Add(x.Key);
+                    x.Key.showups++;
                 }
             }
         }

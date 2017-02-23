@@ -10,6 +10,7 @@ namespace Problem
     {
         public int id;
         public int size;
+        public int showups=0;
         public Video(int i, int s)
         {
             id = i;
