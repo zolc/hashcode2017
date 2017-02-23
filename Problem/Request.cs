@@ -10,12 +10,12 @@ namespace Problem
     {
         public Video video;
         public int videoCount;
-        public double Metric { get; set; }
+        //public double Metric { get; set; }
         public Request(Video v, int vc)
         {
             video = v;
             videoCount = vc;
-            Metric = vc / v.size;
+           // Metric = vc / v.size;
         }
     }
 }
