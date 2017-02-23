@@ -20,7 +20,7 @@ namespace Problem
         {
             Program p = new Program();
             p.Parse();
-           
+            p.FilterRequests();
         }
 
         void Parse()
@@ -34,7 +34,7 @@ namespace Problem
             int numOfEndpoints = int.Parse(initialNumbers[1]);
             int numOfRequests = int.Parse(initialNumbers[2]);
             int numOfCaches = int.Parse(initialNumbers[3]);
-            int maxSize = int.Parse(initialNumbers[4]);
+            maxSize = int.Parse(initialNumbers[4]);
 
             // dodajemy wszystkie cache
             for (int i = 0; i < numOfCaches; i++)
