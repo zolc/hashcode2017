@@ -14,6 +14,7 @@ namespace Problem
 
         public Dictionary<Video,double> metrics = new Dictionary<Video,double>();
         public List<Video> addedVideos = new List<Video>();
+        public List<KeyValuePair<Video, double>> metricsList;
         public Cache(List<Endpoint> e,int maxCapacity)
         {
             endpoints = e;
@@ -27,8 +28,10 @@ namespace Problem
 
         public void SortMetrics()
         {
-            metrics.OrderByDescending(item => item.Value);
-            metrics.OrderBy(item => item.Key.showups);
+            foreach (var m in metrics.OrderByDescending(item => item.Value).OrderBy(item => item.Key.showups))
+            {
+                metricsList.Add(m);
+            }
         }
         public void EvaluateMetrics()
         {
@@ -54,7 +57,7 @@ namespace Problem
 
         public void addVideos()
         {
-            foreach (var x in metrics)
+            foreach (var x in metricsList)
             {
                 if (capacityLeft >= x.Key.size)
                 {
