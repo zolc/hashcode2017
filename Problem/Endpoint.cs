@@ -23,5 +23,18 @@ namespace Problem
             dataCenterLatency = d;
 
         }
+        public void DeleteVideo(Video vid)
+        {
+            List<Request> videosToRemove = new List<Request>();
+           foreach(var req in requests)
+            {
+                if (req.video == vid)
+                    videosToRemove.Add(req);
+            }
+           foreach(var v in videosToRemove)
+            {
+                requests.Remove(v);
+            }
+        }
     }
 }

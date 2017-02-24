@@ -17,5 +17,6 @@ namespace Problem
             videoCount = vc;
            // Metric = vc / v.size;
         }
+
     }
 }

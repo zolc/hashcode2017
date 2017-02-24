@@ -13,15 +13,24 @@ namespace Problem
         //private static int numOfEndpoints;
         public int maxSize;
         public List<Cache> allCaches=new List<Cache>();
+        public List<Cache> sortedCaches = new List<Cache>();
         public List<Endpoint> allEndpoints=new List<Endpoint>();
         public List<Video> allVideos= new List<Video>();
         //public List<Request> allRequests;
+        public void SortCaches()
+        {
+            foreach (var m in allCaches.OrderByDescending(item => item.endpoints.Count))//.OrderBy(item => item.Key.showups)
+            {
+                sortedCaches.Add(m);
+            }
+        }
         static void Main(string[] args)
         {
             Program p = new Program();
             p.Parse();
             p.FilterRequests();
-            foreach(var x in p.allCaches)
+            p.SortCaches();
+            foreach (var x in p.sortedCaches)
             {
                 x.finish();
             }
