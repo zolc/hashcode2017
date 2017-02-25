@@ -9,25 +9,28 @@ namespace Problem
     public class Endpoint
     {
         public int dataCenterLatency;
-        public Dictionary<Cache, int> latencies = new Dictionary<Cache, int>();
+        public Dictionary<Cache, int> latenciesToCaches = new Dictionary<Cache, int>();
         public List<Request> requests = new List<Request>();
+        public object requestsLock = new object();
 
-
-        public Endpoint(int d)
+        public Endpoint(int _dataCenterLatency)
         {
-            dataCenterLatency = d;
+            dataCenterLatency = _dataCenterLatency;
         }
 
         public void DeleteVideo(Video vid)
         {
-            List<Request> videosToRemove = new List<Request>();
-            foreach (var req in requests)
+            List<Request> requestsToRemove = new List<Request>();
+            lock (requestsLock)
             {
-                if (req.video == vid)
-                    videosToRemove.Add(req);
+                foreach (var request in requests)
+                {
+                    if (request.video == vid)
+                        requestsToRemove.Add(request);
+                }
+                foreach (var request in requestsToRemove)
+                    requests.Remove(request);
             }
-            foreach (var v in videosToRemove)
-                requests.Remove(v);
         }
     }
 }

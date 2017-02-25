@@ -59,7 +59,7 @@ namespace Problem
             List<Endpoint> endpointsToRemove = new List<Endpoint>();
             foreach (Endpoint endpoint in allEndpoints)
             {
-                if (endpoint.latencies.Count == 0)
+                if (endpoint.latenciesToCaches.Count == 0)
                     endpointsToRemove.Add(endpoint);
             }
             for (int i = 0; i < endpointsToRemove.Count; i++)
@@ -84,8 +84,12 @@ namespace Problem
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            foreach (var cache in SortCaches())
+            //foreach (var cache in SortCaches())
+            //    cache.EvaluateAndFillWithVideos();
+            Parallel.ForEach(SortCaches(), cache =>
+            {
                 cache.EvaluateAndFillWithVideos();
+            });
 
             watch.Stop();
             ProgramExtender.LogPerformanceMetric("evaluating and filling caches", watch);

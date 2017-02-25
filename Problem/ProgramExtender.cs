@@ -74,7 +74,7 @@ namespace Problem
                     int cacheLatency = int.Parse(cacheServerInfo[1]);
 
                     // Add Cache to the Endpoint
-                    endpoint.latencies.Add(p.allCaches[cacheID], cacheLatency);
+                    endpoint.latenciesToCaches.Add(p.allCaches[cacheID], cacheLatency);
 
                     // Add Endpoint to the Cache
                     p.allCaches[cacheID].endpointsConnected.Add(endpoint);
@@ -107,7 +107,7 @@ namespace Problem
             if (!Console.IsErrorRedirected)
                 return;
 
-            Console.Error.WriteLine("{0,-30} {1,10:N} ms", action, watch.ElapsedMilliseconds);
+            Console.Error.WriteLine("{0,-30} {1,10} ms", action, watch.ElapsedMilliseconds);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Problem
         public int cacheID;
         public int capacityLeft;
 
-        public Dictionary<Video, double> metrics = new Dictionary<Video, double>();
+        public Dictionary<Video, double> videoMetrics = new Dictionary<Video, double>();
         public List<Video> videosHeld = new List<Video>();
 
         public Cache(int capacity, int _cacheID)
@@ -23,27 +23,29 @@ namespace Problem
 
         public IOrderedEnumerable<KeyValuePair<Video, double>> SortMetrics()
         {
-            return metrics.OrderByDescending(item => item.Value);
+            return videoMetrics.OrderByDescending(item => item.Value);
         }
 
         public void EvaluateMetrics()
         {
             foreach (var endpoint in endpointsConnected)
             {
-                foreach (var req in endpoint.requests)
+                lock (endpoint.requestsLock)
                 {
-                    try
+                    foreach (var request in endpoint.requests)
                     {
-                        metrics.Add(req.video, 0);
+                        if (!videoMetrics.ContainsKey(request.video))
+                            videoMetrics.Add(request.video, 0);
+
+                        videoMetrics[request.video] += request.watchCount * (endpoint.dataCenterLatency - endpoint.latenciesToCaches[this]);
                     }
-                    catch { }
-                    metrics[req.video] += req.watchCount * (endpoint.dataCenterLatency - endpoint.latencies[this]);
                 }
             }
-            KeyValuePair<Video, double>[] metricsArray = metrics.ToArray();
-            for (int i = 0; i < metrics.Count(); i++)
+
+            KeyValuePair<Video, double>[] metricsArray = videoMetrics.ToArray();
+            for (int i = 0; i < videoMetrics.Count(); i++)
             {
-                metrics[metricsArray[i].Key] /= metricsArray[i].Key.size;
+                videoMetrics[metricsArray[i].Key] /= metricsArray[i].Key.size;
             }
         }
 
@@ -60,11 +62,11 @@ namespace Problem
                 }
             }
         }
-        public void RemoveVideoFromEndpoints(Video vid)
+        public void RemoveVideoFromEndpoints(Video video)
         {
-            foreach (var end in endpointsConnected)
+            foreach (var endpoint in endpointsConnected)
             {
-                end.DeleteVideo(vid);
+                endpoint.DeleteVideo(video);
             }
         }
 
