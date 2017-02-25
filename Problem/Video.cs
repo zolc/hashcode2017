@@ -10,11 +10,12 @@ namespace Problem
     {
         public int id;
         public int size;
-        public int showups=0;
-        public Video(int i, int s)
+        public int alreadyUsedAmount = 0;
+
+        public Video(int _id, int _size)
         {
-            id = i;
-            size = s;
+            id = _id;
+            size = _size;
         }
     }
 }

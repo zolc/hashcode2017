@@ -9,32 +9,25 @@ namespace Problem
     class Endpoint
     {
         public int dataCenterLatency;
-        public Dictionary<Cache,int> latencies = new Dictionary<Cache, int>();
-        public List<Request> requests=new List<Request>();
+        public Dictionary<Cache, int> latencies = new Dictionary<Cache, int>();
+        public List<Request> requests = new List<Request>();
 
 
-        public Endpoint(int d,Dictionary<Cache,int> l)
-        {
-            dataCenterLatency = d;
-            latencies = l;
-        }
         public Endpoint(int d)
         {
             dataCenterLatency = d;
-
         }
+
         public void DeleteVideo(Video vid)
         {
             List<Request> videosToRemove = new List<Request>();
-           foreach(var req in requests)
+            foreach (var req in requests)
             {
                 if (req.video == vid)
                     videosToRemove.Add(req);
             }
-           foreach(var v in videosToRemove)
-            {
+            foreach (var v in videosToRemove)
                 requests.Remove(v);
-            }
         }
     }
 }

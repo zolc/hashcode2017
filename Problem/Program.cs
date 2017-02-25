@@ -9,33 +9,28 @@ namespace Problem
 {
     class Program
     {
-        //private static int numOfvideos;
-        //private static int numOfEndpoints;
         public int maxSize;
-        public List<Cache> allCaches=new List<Cache>();
-        public List<Cache> sortedCaches = new List<Cache>();
-        public List<Endpoint> allEndpoints=new List<Endpoint>();
-        public List<Video> allVideos= new List<Video>();
-        //public List<Request> allRequests;
-        public void SortCaches()
-        {
-            foreach (var m in allCaches.OrderByDescending(item => item.endpoints.Count))//.OrderBy(item => item.Key.showups)
-            {
-                sortedCaches.Add(m);
-            }
-        }
+        public List<Cache> allCaches = new List<Cache>();
+        public List<Endpoint> allEndpoints = new List<Endpoint>();
+        public List<Video> allVideos = new List<Video>();
+
         static void Main(string[] args)
         {
             Program p = new Program();
-            p.Parse();
-            p.FilterRequests();
-            p.SortCaches();
-            foreach (var x in p.sortedCaches)
+            try
             {
-                x.finish();
+                p.Parse();
             }
-            p.Output();
-
+            catch (FileNotFoundException e)
+            {
+                Console.WriteLine("File not found");
+                return;
+            }
+            
+            p.FilterRequests();
+            foreach (var cache in p.SortCaches())
+                cache.EvaluateAndFillWithVideos();
+            p.OutputResults();
         }
 
         void Parse()
@@ -58,12 +53,12 @@ namespace Problem
             }
             //dodajemy wszystkie video
             string[] videosSizes = fileLines[1].Split(' ');
-            for (int i=0; i < numOfVideos; i++)
+            for (int i = 0; i < numOfVideos; i++)
                 allVideos.Add(new Video(i, int.Parse(videosSizes[i])));
 
             //dodajemy wszystkie endpointy i łączymy je z cache
             int currentLine = 2;
-            for (int i=0; i < numOfEndpoints; i++)
+            for (int i = 0; i < numOfEndpoints; i++)
             {
                 string[] endpointInfo = fileLines[currentLine].Split(' ');
                 int dataCenterLatency = int.Parse(endpointInfo[0]);
@@ -71,7 +66,7 @@ namespace Problem
 
                 Endpoint endpoint = new Endpoint(dataCenterLatency);
                 currentLine++;
-                for (int j=0; j < endpointCachesAmount; j++)
+                for (int j = 0; j < endpointCachesAmount; j++)
                 {
                     string[] cacheServerInfo = fileLines[currentLine++].Split(' ');
                     int cacheID = int.Parse(cacheServerInfo[0]);
@@ -81,13 +76,13 @@ namespace Problem
                     endpoint.latencies.Add(allCaches[cacheID], cacheLatency);
 
                     // dodanie Endpointa do Cachea
-                    allCaches[cacheID].endpoints.Add(endpoint);
+                    allCaches[cacheID].endpointsConnected.Add(endpoint);
                 }
                 allEndpoints.Add(endpoint);
             }
 
             // dodajemy requesty
-            for (int i=0; i < numOfRequests; i++)
+            for (int i = 0; i < numOfRequests; i++)
             {
                 string[] requestInfo = fileLines[currentLine++].Split(' ');
                 int videoID = int.Parse(requestInfo[0]);
@@ -126,30 +121,25 @@ namespace Problem
                 }
             }
         }
-        void Output()
+
+        IOrderedEnumerable<Cache> SortCaches()
         {
-            int usedCaches = 0;
-            foreach (var x in allCaches)
+            return allCaches.OrderByDescending(item => item.endpointsConnected.Count);//.OrderBy(item => item.Key.showups)
+        }
+
+        void OutputResults()
+        {
+            List<Cache> usedCaches = new List<Cache>();
+            foreach (var cache in allCaches)
             {
-                if (x.IsUsed())
-                    usedCaches++;
+                if (cache.IsUsed())
+                    usedCaches.Add(cache);
             }
-            Console.WriteLine(usedCaches);
-            foreach (var x in allCaches)
-            {
-                if (x.IsUsed())
-                {
-                    Console.Write(x.cacheId);
-                    int count = x.addedVideos.Count();
-                    while(count>0)
-                    {
-                        Console.Write(" {0}", x.addedVideos[count-1].id);
-                        x.addedVideos.RemoveAt(count - 1);
-                        count--;
-                    }
-                    Console.WriteLine();
-                }
-            }
+
+            Console.WriteLine(usedCaches.Count);
+
+            foreach (var cache in usedCaches)
+                Console.WriteLine(cache);
         }
 
     }

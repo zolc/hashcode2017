@@ -8,34 +8,27 @@ namespace Problem
 {
     class Cache
     {
-        public List<Endpoint> endpoints = new List<Endpoint>();
-        public int cacheId;
+        public List<Endpoint> endpointsConnected = new List<Endpoint>();
+        public int cacheID;
         public int capacityLeft;
 
         public Dictionary<Video, double> metrics = new Dictionary<Video, double>();
-        public List<Video> addedVideos = new List<Video>();
-        public List<KeyValuePair<Video, double>> metricsList = new List<KeyValuePair<Video, double>>();
-        public Cache(List<Endpoint> e, int maxCapacity)
+        public List<Video> videosHeld = new List<Video>();
+
+        public Cache(int capacity, int _cacheID)
         {
-            endpoints = e;
-            capacityLeft = maxCapacity;
-        }
-        public Cache(int maxCapacity, int i)
-        {
-            capacityLeft = maxCapacity;
-            cacheId = i;
+            capacityLeft = capacity;
+            cacheID = _cacheID;
         }
 
-        public void SortMetrics()
+        public IOrderedEnumerable<KeyValuePair<Video, double>> SortMetrics()
         {
-            foreach (var m in metrics.OrderByDescending(item => item.Value))//.OrderBy(item => item.Key.showups)
-            {
-                metricsList.Add(m);
-            }
+            return metrics.OrderByDescending(item => item.Value);
         }
+
         public void EvaluateMetrics()
         {
-            foreach (var endpoint in endpoints)
+            foreach (var endpoint in endpointsConnected)
             {
                 foreach (var req in endpoint.requests)
                 {
@@ -44,46 +37,58 @@ namespace Problem
                         metrics.Add(req.video, 0);
                     }
                     catch { }
-                    metrics[req.video] += req.videoCount * (endpoint.dataCenterLatency - endpoint.latencies[this]);
+                    metrics[req.video] += req.watchCount * (endpoint.dataCenterLatency - endpoint.latencies[this]);
                 }
             }
-            KeyValuePair<Video, double>[] array = metrics.ToArray();
+            KeyValuePair<Video, double>[] metricsArray = metrics.ToArray();
             for (int i = 0; i < metrics.Count(); i++)
             {
-                metrics[array[i].Key] /= array[i].Key.size;
+                metrics[metricsArray[i].Key] /= metricsArray[i].Key.size;
             }
         }
 
-        public void addVideos()
+        public void FillWithVideos(IEnumerable<Video> videos)
         {
-            foreach (var x in metricsList)
+            foreach (var video in videos)
             {
-                if (capacityLeft >= x.Key.size)
+                if (capacityLeft >= video.size)
                 {
-                    Video added = x.Key;
-                    clearEndpoints(added);
-                    capacityLeft -= x.Key.size;
-                    addedVideos.Add(x.Key);
-                    x.Key.showups++;
+                    RemoveVideoFromEndpoints(video);
+                    capacityLeft -= video.size;
+                    videosHeld.Add(video);
+                    video.alreadyUsedAmount++;
                 }
             }
         }
-        public void clearEndpoints(Video vid)
+        public void RemoveVideoFromEndpoints(Video vid)
         {
-            foreach (var end in endpoints)
+            foreach (var end in endpointsConnected)
             {
                 end.DeleteVideo(vid);
             }
         }
-        public void finish()
+
+        public void EvaluateAndFillWithVideos()
         {
             EvaluateMetrics();
-            SortMetrics();
-            addVideos();
+            IEnumerable<Video> sortedVideos = SortMetrics().Select(videoWithMetric => videoWithMetric.Key);
+            FillWithVideos(sortedVideos);
         }
+
         public bool IsUsed()
         {
-            return (addedVideos.Count() != 0);
+            return (videosHeld.Count() != 0);
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(cacheID);
+
+            foreach (var video in videosHeld)
+                sb.AppendFormat(" {0}", video.id);
+
+            return sb.ToString();
         }
     }
 }

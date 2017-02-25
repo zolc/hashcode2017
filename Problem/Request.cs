@@ -9,13 +9,12 @@ namespace Problem
     class Request
     {
         public Video video;
-        public int videoCount;
-        //public double Metric { get; set; }
-        public Request(Video v, int vc)
+        public int watchCount;
+
+        public Request(Video _video, int _watchCount)
         {
-            video = v;
-            videoCount = vc;
-           // Metric = vc / v.size;
+            video = _video;
+            this.watchCount = _watchCount;
         }
 
     }
