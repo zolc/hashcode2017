@@ -27,10 +27,10 @@ namespace Problem
         static void Main(string[] args)
         {
             Program p = new Program();
+
             p.ParseData();
             p.FilterRequests();
-            foreach (var cache in p.SortCaches())
-                cache.EvaluateAndFillWithVideos();
+            p.EvaluateAndFillCaches();
             p.OutputResults();
         }
 
@@ -45,11 +45,16 @@ namespace Problem
             else if (parseMethod == ParseMethod.ParseFromConsole)
                 inputLines = this.ReadDataFromConsole();
 
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             this.ParseDataFromLines(inputLines);
+            watch.Stop();
+            ProgramExtender.LogPerformanceMetric("parsing input data", watch);
         }
 
         void FilterRequests()
         {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+
             // 1. Usuwamy requesty z endpointów bez cache
             List<Endpoint> endpointsToRemove = new List<Endpoint>();
             foreach (Endpoint endpoint in allEndpoints)
@@ -58,9 +63,7 @@ namespace Problem
                     endpointsToRemove.Add(endpoint);
             }
             for (int i = 0; i < endpointsToRemove.Count; i++)
-            {
                 allEndpoints.Remove(endpointsToRemove[i]);
-            }
 
             // 2. Usuwamy requesty na filmy, które przekraczają maxSize
             foreach (Endpoint endpoint in allEndpoints)
@@ -72,6 +75,20 @@ namespace Problem
                         endpoint.requests.Remove(req);
                 }
             }
+
+            watch.Stop();
+            ProgramExtender.LogPerformanceMetric("filtering requests", watch);
+        }
+
+        void EvaluateAndFillCaches()
+        {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+
+            foreach (var cache in SortCaches())
+                cache.EvaluateAndFillWithVideos();
+
+            watch.Stop();
+            ProgramExtender.LogPerformanceMetric("evaluating and filling caches", watch);
         }
 
         IOrderedEnumerable<Cache> SortCaches()
@@ -81,6 +98,8 @@ namespace Problem
 
         void OutputResults()
         {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+
             List<Cache> usedCaches = new List<Cache>();
             foreach (var cache in allCaches)
             {
@@ -92,6 +111,9 @@ namespace Problem
 
             foreach (var cache in usedCaches)
                 Console.WriteLine(cache);
+
+            watch.Stop();
+            ProgramExtender.LogPerformanceMetric("printing results", watch);
         }
 
     }

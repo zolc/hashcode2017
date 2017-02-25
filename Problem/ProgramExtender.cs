@@ -39,19 +39,26 @@ namespace Problem
             int numOfRequests = int.Parse(initialNumbers[2]);
             int numOfCaches = int.Parse(initialNumbers[3]);
             p.maxSize = int.Parse(initialNumbers[4]);
+            var watch = new System.Diagnostics.Stopwatch();
 
             // Add all caches
+            watch.Start();
             for (int i = 0; i < numOfCaches; i++)
-            {
                 p.allCaches.Add(new Cache(p.maxSize, i));
-            }
+            watch.Stop();
+            LogPerformanceMetric("creating caches", watch);
+
             // Add all videos
+            watch.Restart();
             string[] videosSizes = inputLines[1].Split(' ');
             for (int i = 0; i < numOfVideos; i++)
                 p.allVideos.Add(new Video(i, int.Parse(videosSizes[i])));
+            watch.Stop();
+            LogPerformanceMetric("creating videos", watch);
 
             // Add all endpoints and connect them with caches
             int currentLine = 2;
+            watch.Restart();
             for (int i = 0; i < numOfEndpoints; i++)
             {
                 string[] endpointInfo = inputLines[currentLine].Split(' ');
@@ -74,8 +81,11 @@ namespace Problem
                 }
                 p.allEndpoints.Add(endpoint);
             }
+            watch.Stop();
+            LogPerformanceMetric("creating endpoints", watch);
 
             // Add requests
+            watch.Restart();
             for (int i = 0; i < numOfRequests; i++)
             {
                 string[] requestInfo = inputLines[currentLine++].Split(' ');
@@ -88,6 +98,16 @@ namespace Problem
 
                 endpoint.requests.Add(new Request(video, watchCount));
             }
+            watch.Stop();
+            LogPerformanceMetric("adding requests", watch);
+        }
+
+        public static void LogPerformanceMetric(string action, System.Diagnostics.Stopwatch watch)
+        {
+            if (!Console.IsErrorRedirected)
+                return;
+
+            Console.Error.WriteLine("{0,-30} {1,10:N} ms", action, watch.ElapsedMilliseconds);
         }
     }
 }
