@@ -12,6 +12,7 @@ fi
 TESTCASE="$1"
 INPUT_FILE="$TESTCASE.in"
 OUTPUT_FILE="$TESTCASE.out"
+LOGS_FILE="$TESTCASE.log"
 printf "Executing the program for the following test case: $INPUT_FILE\n"
 
 if [ ! -f "$INPUT_FILE" ]; then
@@ -19,5 +20,6 @@ if [ ! -f "$INPUT_FILE" ]; then
   exit 2
 fi
 
-"$PROGRAM_PATH" < "$INPUT_FILE" > "$OUTPUT_FILE"
-printf "Test case $TESTCASE finished. Output saved in $OUTPUT_FILE\n"
+"$PROGRAM_PATH" < "$INPUT_FILE" > "$OUTPUT_FILE" 2> "$LOGS_FILE"
+printf "Test case $TESTCASE finished.\nOutput saved in $OUTPUT_FILE\n"
+printf "Diagnostic logs saved in $LOGS_FILE\n"
