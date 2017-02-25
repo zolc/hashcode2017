@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Problem
 {
-    class Video
+    public class Video
     {
         public int id;
         public int size;

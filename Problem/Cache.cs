@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Problem
 {
-    class Cache
+    public class Cache
     {
         public List<Endpoint> endpointsConnected = new List<Endpoint>();
         public int cacheID;

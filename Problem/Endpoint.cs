@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Problem
 {
-    class Endpoint
+    public class Endpoint
     {
         public int dataCenterLatency;
         public Dictionary<Cache, int> latencies = new Dictionary<Cache, int>();

@@ -5,10 +5,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+enum ParseMethod
+{
+    ParseFromFile,
+    ParseFromConsole
+}
+
 namespace Problem
 {
-    class Program
+    public class Program
     {
+        // If the input is redirected, then read straight from the console
+        // Otherwise ask for the filename
+        ParseMethod parseMethod = Console.IsInputRedirected ? ParseMethod.ParseFromConsole : ParseMethod.ParseFromFile;
+
         public int maxSize;
         public List<Cache> allCaches = new List<Cache>();
         public List<Endpoint> allEndpoints = new List<Endpoint>();
@@ -17,83 +27,25 @@ namespace Problem
         static void Main(string[] args)
         {
             Program p = new Program();
-            try
-            {
-                p.Parse();
-            }
-            catch (FileNotFoundException e)
-            {
-                Console.WriteLine("File not found");
-                return;
-            }
-            
+            p.ParseData();
             p.FilterRequests();
             foreach (var cache in p.SortCaches())
                 cache.EvaluateAndFillWithVideos();
             p.OutputResults();
         }
 
-        void Parse()
+        void ParseData()
         {
-            string filename = Console.ReadLine();
-            string[] fileLines = File.ReadAllLines(filename);
-
-            // Początkowe wartości
-            string[] initialNumbers = fileLines[0].Split(' ');
-            int numOfVideos = int.Parse(initialNumbers[0]);
-            int numOfEndpoints = int.Parse(initialNumbers[1]);
-            int numOfRequests = int.Parse(initialNumbers[2]);
-            int numOfCaches = int.Parse(initialNumbers[3]);
-            maxSize = int.Parse(initialNumbers[4]);
-
-            // dodajemy wszystkie cache
-            for (int i = 0; i < numOfCaches; i++)
+            string[] inputLines = null;
+            if (parseMethod == ParseMethod.ParseFromFile)
             {
-                allCaches.Add(new Cache(maxSize, i));
+                string filename = Console.ReadLine();
+                inputLines = this.ReadDataFromFile(filename);
             }
-            //dodajemy wszystkie video
-            string[] videosSizes = fileLines[1].Split(' ');
-            for (int i = 0; i < numOfVideos; i++)
-                allVideos.Add(new Video(i, int.Parse(videosSizes[i])));
+            else if (parseMethod == ParseMethod.ParseFromConsole)
+                inputLines = this.ReadDataFromConsole();
 
-            //dodajemy wszystkie endpointy i łączymy je z cache
-            int currentLine = 2;
-            for (int i = 0; i < numOfEndpoints; i++)
-            {
-                string[] endpointInfo = fileLines[currentLine].Split(' ');
-                int dataCenterLatency = int.Parse(endpointInfo[0]);
-                int endpointCachesAmount = int.Parse(endpointInfo[1]);
-
-                Endpoint endpoint = new Endpoint(dataCenterLatency);
-                currentLine++;
-                for (int j = 0; j < endpointCachesAmount; j++)
-                {
-                    string[] cacheServerInfo = fileLines[currentLine++].Split(' ');
-                    int cacheID = int.Parse(cacheServerInfo[0]);
-                    int cacheLatency = int.Parse(cacheServerInfo[1]);
-
-                    // dodanie Cache do Endpointa
-                    endpoint.latencies.Add(allCaches[cacheID], cacheLatency);
-
-                    // dodanie Endpointa do Cachea
-                    allCaches[cacheID].endpointsConnected.Add(endpoint);
-                }
-                allEndpoints.Add(endpoint);
-            }
-
-            // dodajemy requesty
-            for (int i = 0; i < numOfRequests; i++)
-            {
-                string[] requestInfo = fileLines[currentLine++].Split(' ');
-                int videoID = int.Parse(requestInfo[0]);
-                int endpointID = int.Parse(requestInfo[1]);
-                int requestDemand = int.Parse(requestInfo[2]); // liczba requestów
-
-                Video video = allVideos[videoID];
-                Endpoint endpoint = allEndpoints[endpointID];
-
-                endpoint.requests.Add(new Request(video, requestDemand));
-            }
+            this.ParseDataFromLines(inputLines);
         }
 
         void FilterRequests()
