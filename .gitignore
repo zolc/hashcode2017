@@ -251,6 +251,9 @@ paket-files/
 .idea/
 *.sln.iml
 
-
+# Output and performance files
 *.out
 *.log
+
+# Compressed archive
+*.zip
