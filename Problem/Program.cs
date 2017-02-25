@@ -19,6 +19,8 @@ namespace Problem
         // Otherwise ask for the filename
         ParseMethod parseMethod = Console.IsInputRedirected ? ParseMethod.ParseFromConsole : ParseMethod.ParseFromFile;
 
+        bool parallelCacheEvaluation = false;
+
         public int maxSize;
         public List<Cache> allCaches = new List<Cache>();
         public List<Endpoint> allEndpoints = new List<Endpoint>();
@@ -84,12 +86,13 @@ namespace Problem
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            //foreach (var cache in SortCaches())
-            //    cache.EvaluateAndFillWithVideos();
-            Parallel.ForEach(SortCaches(), cache =>
+            if (parallelCacheEvaluation)
+                Parallel.ForEach(SortCaches(), cache => cache.EvaluateAndFillWithVideos());
+            else
             {
-                cache.EvaluateAndFillWithVideos();
-            });
+                foreach (var cache in SortCaches())
+                    cache.EvaluateAndFillWithVideos();
+            }
 
             watch.Stop();
             ProgramExtender.LogPerformanceMetric("evaluating and filling caches", watch);
