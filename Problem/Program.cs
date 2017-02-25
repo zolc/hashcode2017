@@ -19,7 +19,7 @@ namespace Problem
         // Otherwise ask for the filename
         ParseMethod parseMethod = Console.IsInputRedirected ? ParseMethod.ParseFromConsole : ParseMethod.ParseFromFile;
 
-        bool parallelCacheEvaluation = true;
+        bool parallelCacheEvaluation = false;
 
         public int maxSize;
         public List<Cache> allCaches = new List<Cache>();

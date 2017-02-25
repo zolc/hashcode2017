@@ -37,15 +37,9 @@ namespace Problem
                         if (!videoMetrics.ContainsKey(request.video))
                             videoMetrics.Add(request.video, 0);
 
-                        videoMetrics[request.video] += request.watchCount * (endpoint.dataCenterLatency - endpoint.latenciesToCaches[this]);
+                        videoMetrics[request.video] += request.watchCount * (endpoint.dataCenterLatency - endpoint.latenciesToCaches[this])/request.video.size;
                     }
                 }
-            }
-
-            KeyValuePair<Video, double>[] metricsArray = videoMetrics.ToArray();
-            for (int i = 0; i < videoMetrics.Count(); i++)
-            {
-                videoMetrics[metricsArray[i].Key] /= metricsArray[i].Key.size;
             }
         }
 
